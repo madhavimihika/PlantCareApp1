@@ -2,7 +2,7 @@ import SwiftUI
 
 struct WateringScheduleView: View {
     @Environment(\.dismiss) var dismiss
-     @StateObject private var viewModel = MyPlantsViewModel.shared 
+    @StateObject private var viewModel = MyPlantsViewModel.shared
     
     var body: some View {
         NavigationStack {
@@ -10,8 +10,7 @@ struct WateringScheduleView: View {
                 Color.plantBackground.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        
-                        // NextWatering Card
+                        //next watering card
                         if let firstPlant = viewModel.plants.first {
                             VStack(alignment: .leading, spacing: 0) {
                                 ZStack(alignment: .bottomLeading) {
@@ -25,9 +24,7 @@ struct WateringScheduleView: View {
                                     }
                                     .font(.caption).fontWeight(.bold).foregroundColor(.white)
                                     .padding(.horizontal, 10).padding(.vertical, 6)
-                                    .background(Color.plantPrimary)
-                                    .clipShape(Capsule())
-                                    .padding(15)
+                                    .background(Color.plantPrimary).clipShape(Capsule()).padding(15)
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 12) {
@@ -40,7 +37,10 @@ struct WateringScheduleView: View {
                                     }
                                     Text("Location: \(firstPlant.location)").font(.caption).foregroundColor(.gray)
                                     
-                                    Button(action: {}) {
+                                    Button(action: {
+                                        viewModel.logActivity(action: "Watered", plantName: firstPlant.name, icon: "drop.fill", color: .blue)
+                                        NotificationService.shared.scheduleNotification(title: "Watering Done!", body: "You watered \(firstPlant.name).")
+                                    }) {
                                         HStack {
                                             Image(systemName: "checkmark")
                                             Text("Mark as Watered")
@@ -56,24 +56,20 @@ struct WateringScheduleView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                             .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                         } else {
-                            Text("No plants added yet.")
-                                .padding()
+                            Text("No plants added yet.").padding()
                         }
                         
-                        // Upcoming Section
                         HStack {
                             Text("Upcoming").font(.title3).fontWeight(.bold)
                             Spacer()
                             Text("View calendar").font(.subheadline).foregroundColor(.plantPrimary)
                         }
                         
-                        // Upcoming List
                         VStack(spacing: 12) {
                             ForEach(viewModel.plants) { plant in
                                 HStack {
                                     Color.plantSecondary.opacity(0.3).frame(width: 60, height: 60).clipShape(RoundedRectangle(cornerRadius: 12))
                                         .overlay(Image(systemName: "leaf.fill").foregroundColor(.plantPrimary))
-                                    
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(plant.name).font(.headline)
                                         Text("Tomorrow • 8:00 AM").font(.caption).foregroundColor(.gray)
@@ -88,18 +84,10 @@ struct WateringScheduleView: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("Watering Schedule")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Watering Schedule").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left").foregroundColor(.plantText)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "plus").foregroundColor(.white).padding(8).background(Color.plantPrimary).clipShape(Circle())
-                    }
+                    Button(action: { dismiss() }) { Image(systemName: "chevron.left").foregroundColor(.plantText) }
                 }
             }
         }

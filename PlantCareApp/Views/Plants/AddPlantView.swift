@@ -7,7 +7,6 @@ struct AddPlantView: View {
     @State private var botanicalName = ""
     @State private var location = "Bedroom"
     
-    // Connect to the shared ViewModel
     @ObservedObject var viewModel = MyPlantsViewModel.shared
     
     var body: some View {
@@ -19,9 +18,12 @@ struct AddPlantView: View {
                     TextField("Location (e.g., Living Room)", text: $location)
                 }
                 
-             Section {
+                Section {
                     Button(action: {
                         viewModel.addPlant(name: plantName.isEmpty ? "New Plant" : plantName, botanicalName: botanicalName.isEmpty ? "Unknown" : botanicalName, location: location)
+                        
+                        viewModel.logActivity(action: "Added Plant", plantName: plantName, icon: "leaf.fill", color: .green)
+                        
                         dismiss()
                     }) {
                         Text("Save Plant").font(.headline).frame(maxWidth: .infinity).foregroundColor(.white)
