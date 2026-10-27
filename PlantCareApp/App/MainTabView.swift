@@ -22,20 +22,8 @@ struct MainTabView: View {
                             .tabItem {
                                 Label("Nurseries", systemImage: "mappin.and.ellipse")
                             }
-            
-            VStack {
-                Text("Profile")
-                    .font(.title)
-                Button("Log Out") {
-                    try? AuthService.shared.signOut()
-                }
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.top, 20)
-            }
-            .tabItem { Label("Profile", systemImage: "person.fill") }
+            ProfileView()
+                .tabItem { Label("Profile", systemImage: "person.fill") }
         }
         .tint(.plantPrimary)
     }
