@@ -15,12 +15,6 @@ struct AddPlantView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Plant Details")) {
-                    TextField("Name (e.g., Monstera)", text: $plantName)
-                    TextField("Botanical Name (optional)", text: $botanicalName)
-                    TextField("Location (e.g., Living Room)", text: $location)
-                }
-                
                 Section(header: Text("Plant Photo")) {
                     PhotosPicker(selection: $selectedItem, matching: .images) {
                         if let selectedImage = selectedImage {
@@ -48,11 +42,28 @@ struct AddPlantView: View {
                     }
                 }
                 
+                Section(header: Text("Plant Details")) {
+                    TextField("Name (e.g., Monstera)", text: $plantName)
+                    TextField("Botanical Name (optional)", text: $botanicalName)
+                    TextField("Location (e.g., Living Room)", text: $location)
+                }
+                
                 Section {
                     Button(action: {
-                        viewModel.addPlant(name: plantName.isEmpty ? "New Plant" : plantName, botanicalName: botanicalName.isEmpty ? "Unknown" : botanicalName, location: location)
+                        // Determine the final name
+                        let finalName = plantName.isEmpty ? "New Plant" : plantName
                         
-                        viewModel.logActivity(action: "Added Plant", plantName: plantName, icon: "leaf.fill", color: .green)
+                        // Save the image using the FINAL name
+                        if let image = selectedImage {
+                            saveImageToDisk(image: image, name: finalName)
+                        }
+                        
+                        // Save to Firestore
+                        viewModel.addPlant(
+                            name: finalName,
+                            botanicalName: botanicalName.isEmpty ? "Unknown" : botanicalName,
+                            location: location
+                        )
                         
                         dismiss()
                     }) {
@@ -65,5 +76,13 @@ struct AddPlantView: View {
             .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button("Cancel") { dismiss() } } }
         }
     }
+    
+    // Helper to save the image locally
+    func saveImageToDisk(image: UIImage, name: String) {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let filePath = paths[0].appendingPathComponent("\(name).png")
+        if let data = image.pngData() {
+            try? data.write(to: filePath)
+        }
+    }
 }
-//remobved log activity from add plant view, as it was causing duplicate entries in the activity log. The log activity is now handled in the view modl
