@@ -7,12 +7,12 @@
 
 import Foundation
 import SwiftUI
-
 import PhotosUI
+
 struct ScanView: View {
     @StateObject private var camera = CameraService()
+    @StateObject private var viewModel = MyPlantsViewModel.shared
     
-    // State to pass to the Result View
     @State private var isShowingResult = false
     @State private var scannedDisease = "Unknown"
     @State private var scannedConfidence = 0.0
@@ -21,19 +21,17 @@ struct ScanView: View {
     
     var body: some View {
         NavigationStack {
-            if let selectedImage = selectedImage {
-                Image(uiImage: selectedImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-            } else {
-                CameraPreviewView(camera: camera)
-                    .ignoresSafeArea()
-            }
             ZStack {
-                // 1. Camera Feed
-                CameraPreviewView(camera: camera)
-                    .ignoresSafeArea()
+                // 1. Camera Feed OR Selected Image
+                if let selectedImage = selectedImage {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                } else {
+                    CameraPreviewView(camera: camera)
+                        .ignoresSafeArea()
+                }
                 
                 // 2. Gradient Overlay
                 LinearGradient(gradient: Gradient(colors: [.black.opacity(0.5), .clear, .black.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
@@ -76,19 +74,14 @@ struct ScanView: View {
                     
                     // Bottom Controls
                     HStack {
-//                        VStack {
-//                            Image(systemName: "photo.on.rectangle").font(.title)
-//                            Text("Library").font(.caption)
-//                        }.foregroundColor(.white)
-//                        
                         Spacer()
                         
-                        ///capture btn
+                        // Capture Button
                         Button(action: {
-                            // Testin run the ML model on the static image
+                            viewModel.logActivity(action: "Scanned Plant", plantName: "Unknown", icon: "camera.viewfinder", color: .green)
+                            NotificationService.shared.scheduleNotification(title: "Scan Complete", body: "Your plant scan is ready!")
                             camera.testModelWithImage()
                             
-                            //ML to process, then navigate
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 if let result = camera.predictionResult {
                                     scannedDisease = result
@@ -105,7 +98,8 @@ struct ScanView: View {
                         }
                         
                         Spacer()
-                        // Replace the Library VStack with this:
+                        
+                        // Photo Library Picker
                         PhotosPicker(selection: $selectedItem, matching: .images) {
                             VStack {
                                 Image(systemName: "photo.on.rectangle").font(.title)
@@ -118,7 +112,6 @@ struct ScanView: View {
                                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                                    let uiImage = UIImage(data: data) {
                                     selectedImage = uiImage
-                                    // Run prediction immediately when image is picked
                                     camera.predictImage(image: uiImage) { disease, confidence in
                                         scannedDisease = disease
                                         scannedConfidence = confidence
@@ -127,6 +120,7 @@ struct ScanView: View {
                                 }
                             }
                         }
+                        
                         VStack {
                             Image(systemName: "bolt.slash.fill").font(.title)
                             Text("Auto").font(.caption)
@@ -137,7 +131,6 @@ struct ScanView: View {
             }
             .navigationBarHidden(true)
             .onDisappear { camera.stopCamera() }
-            // Navigate to Result View
             .navigationDestination(isPresented: $isShowingResult) {
                 ScanResultView(diseaseName: scannedDisease, confidence: scannedConfidence)
             }
