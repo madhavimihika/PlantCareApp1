@@ -19,8 +19,9 @@ import SwiftUI
 import Combine
 
 class MyPlantsViewModel: ObservableObject {
-    static let shared = MyPlantsViewModel()
     
+    static let shared = MyPlantsViewModel()
+    @Published var history: [CareHistoryItem] = []// add this to show care history
     // Use empty array (Firebase fill this
     @Published var plants: [Plant] = []
     @Published var selectedFilter: String = "All"
@@ -45,6 +46,10 @@ class MyPlantsViewModel: ObservableObject {
             self.loadPlantsFromCloud()
         }
     }
+    func logActivity(action: String, plantName: String, icon: String, color: Color) {
+    let newItem = CareHistoryItem(date: Date().formatted(date: .abbreviated, time: .shortened), action: action, plantName: plantName, icon: icon, color: color)
+    history.insert(newItem, at: 0)
+}
     
     var filteredPlants: [Plant] {
         switch selectedFilter {
