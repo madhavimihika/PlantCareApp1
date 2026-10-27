@@ -7,8 +7,8 @@ struct AddPlantView: View {
     @State private var plantName = ""
     @State private var botanicalName = ""
     @State private var location = "Bedroom"
-     @State private var selectedItem: PhotosPickerItem? = nil// handle image picking
-    @State private var selectedImage: UIImage? = nil// handle image picking
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var selectedImage: UIImage? = nil
     
     @ObservedObject var viewModel = MyPlantsViewModel.shared
     
@@ -19,6 +19,33 @@ struct AddPlantView: View {
                     TextField("Name (e.g., Monstera)", text: $plantName)
                     TextField("Botanical Name (optional)", text: $botanicalName)
                     TextField("Location (e.g., Living Room)", text: $location)
+                }
+                
+                Section(header: Text("Plant Photo")) {
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+                        if let selectedImage = selectedImage {
+                            Image(uiImage: selectedImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 150)
+                                .frame(maxWidth: .infinity)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        } else {
+                            HStack {
+                                Image(systemName: "camera.fill")
+                                Text("Add Photo")
+                            }
+                            .foregroundColor(.plantPrimary)
+                        }
+                    }
+                    .onChange(of: selectedItem) { newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self),
+                               let uiImage = UIImage(data: data) {
+                                selectedImage = uiImage
+                            }
+                        }
+                    }
                 }
                 
                 Section {
@@ -39,3 +66,4 @@ struct AddPlantView: View {
         }
     }
 }
+//remobved log activity from add plant view, as it was causing duplicate entries in the activity log. The log activity is now handled in the view modl
