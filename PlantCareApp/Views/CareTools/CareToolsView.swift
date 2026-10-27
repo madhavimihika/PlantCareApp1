@@ -69,7 +69,10 @@ struct CareToolsView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                             
-                            ToolCard(icon: "camera.viewfinder", iconColor: .green, title: "Remind & Scan", subtitle: "Smart alerts")
+                            NavigationLink(destination: ReminderSettingsView()) {
+                                ToolCard(icon: "camera.viewfinder", iconColor: .green, title: "Remind & Scan", subtitle: "Smart alerts")
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                     .padding(.horizontal, 20)
