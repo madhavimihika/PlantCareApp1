@@ -4,7 +4,6 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
-
 import SwiftUI
 import PhotosUI
 
@@ -32,7 +31,7 @@ struct ScanView: View {
                         .ignoresSafeArea()
                 }
                 
-                // 2. Gradient Overlay (Only over the camera feed)
+                // 2. Gradient Overlay
                 LinearGradient(gradient: Gradient(colors: [.black.opacity(0.6), .clear, .black.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 
@@ -55,7 +54,7 @@ struct ScanView: View {
                     
                     Text("Scan Plant to Predict\nDiseases")
                         .font(.title2).fontWeight(.bold)
-                        .foregroundColor(.white) // White on dark gradient
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .shadow(color: .black.opacity(0.3), radius: 5)
                     
@@ -71,7 +70,7 @@ struct ScanView: View {
                     
                     Text("Hold steady one leaf inside the frame")
                         .font(.caption).fontWeight(.medium)
-                        .foregroundColor(.white) // White on dark
+                        .foregroundColor(.white)
                         .padding(.top, 20)
                         .shadow(color: .black.opacity(0.5), radius: 3)
                     
@@ -110,7 +109,7 @@ struct ScanView: View {
                                 Image(systemName: "photo.on.rectangle").font(.title)
                                 Text("Library").font(.caption)
                             }
-                            .foregroundColor(.white) // White on dark
+                            .foregroundColor(.white)
                         }
                         .onChange(of: selectedItem) { newItem in
                             Task {
@@ -129,7 +128,7 @@ struct ScanView: View {
                         VStack {
                             Image(systemName: "bolt.slash.fill").font(.title)
                             Text("Auto").font(.caption)
-                        }.foregroundColor(.white) // White on dark
+                        }.foregroundColor(.white)
                     }
                     .padding(.horizontal, 40).padding(.bottom, 40)
                 }

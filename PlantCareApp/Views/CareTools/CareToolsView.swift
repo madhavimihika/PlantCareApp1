@@ -1,12 +1,7 @@
-//
-//  CareToolsView.swift
-//  PlantCareApp
-//
-//  Created by cobsccomp251p-24 on 2026-10-23.
-//
 import SwiftUI
 
 struct CareToolsView: View {
+    @StateObject private var viewModel = MyPlantsViewModel.shared
     let columns = [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
     
     var body: some View {
@@ -54,7 +49,8 @@ struct CareToolsView: View {
                         
                         // Grid of Tools
                         LazyVGrid(columns: columns, spacing: 16) {
-                            NavigationLink(destination: WateringScheduleView()) {
+                            // chamged Pass the first plant (or a dummy plant if none exist)
+                            NavigationLink(destination: WateringScheduleView(plant: viewModel.plants.first ?? Plant(name: "Unknown", botanicalName: "", location: "", health: .healthy, imageName: ""))) {
                                 ToolCard(icon: "drop.fill", iconColor: .blue, title: "Watering", subtitle: "4 plants due this week")
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -67,10 +63,12 @@ struct CareToolsView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             ToolCard(icon: "photo", iconColor: .pink, title: "Plant photos", subtitle: "48 memories")
+                            
                             NavigationLink(destination: CareHistoryView()) {
                                 ToolCard(icon: "clock.arrow.circlepath", iconColor: .purple, title: "Care history", subtitle: "All activity in one place")
                             }
                             .buttonStyle(PlainButtonStyle())
+                            
                             ToolCard(icon: "camera.viewfinder", iconColor: .green, title: "Remind & Scan", subtitle: "Smart alerts")
                         }
                     }
@@ -83,7 +81,7 @@ struct CareToolsView: View {
     }
 }
 
-// Reusable Tool Card Component
+// Reusable
 struct ToolCard: View {
     let icon: String
     let iconColor: Color

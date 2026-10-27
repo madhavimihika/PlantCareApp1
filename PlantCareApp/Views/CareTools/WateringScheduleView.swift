@@ -1,68 +1,82 @@
 import SwiftUI
 
-struct PlantDetailView: View {
-    var plant: Plant
+struct WateringScheduleView: View {
+    var plant: Plant 
     @Environment(\.dismiss) var dismiss
+    @StateObject private var viewModel = MyPlantsViewModel.shared
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.plantBackground.ignoresSafeArea()
                 ScrollView {
-                    VStack(spacing: 20) {
-                        if let uiImage = loadImageFromDisk(name: plant.name) {
-                            Image(uiImage: uiImage).resizable().scaledToFill().frame(height: 200).clipShape(RoundedRectangle(cornerRadius: 20))
-                        } else {
-                            Image(systemName: "leaf.fill").resizable().scaledToFit().frame(height: 80)
-                                .foregroundColor(.plantPrimary).frame(height: 200).frame(maxWidth: .infinity)
-                                .background(Color.plantBackground).clipShape(RoundedRectangle(cornerRadius: 20))
-                        }
+                    VStack(alignment: .leading, spacing: 20) {
                         
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text(plant.name).font(.largeTitle).fontWeight(.bold).foregroundColor(.plantText)
-                            Text(plant.botanicalName).font(.subheadline).foregroundColor(.gray).italic()
+                        VStack(alignment: .leading, spacing: 0) {
+                            ZStack(alignment: .bottomLeading) {
+                                Color.green.opacity(0.15)
+                                    .frame(height: 160)
+                                    .overlay(Image(systemName: "leaf.fill").font(.system(size: 60)).foregroundColor(.white.opacity(0.8)))
+                                
+                                HStack {
+                                    Image(systemName: "drop.fill")
+                                    Text("Every 5 days")
+                                }
+                                .font(.caption).fontWeight(.bold).foregroundColor(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 6)
+                                .background(Color.plantPrimary).clipShape(Capsule()).padding(16)
+                            }
                             
-                            Divider()
-                            
-                            HStack {
-                                Image(systemName: "mappin.circle.fill").foregroundColor(.plantPrimary)
-                                Text(plant.location).foregroundColor(.plantText)
-                            }.font(.subheadline)
-                            
-                            HStack {
-                                Image(systemName: "heart.fill").foregroundColor(.plantPrimary)
-                                Text(plant.health.rawValue).foregroundColor(.plantText)
-                            }.font(.subheadline)
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("NEXT WATERING").font(.caption).fontWeight(.bold).foregroundColor(.gray)
+                                Text(plant.name).font(.title2).fontWeight(.bold).foregroundColor(.plantText)
+                                
+                                HStack {
+                                    Image(systemName: "clock.fill").foregroundColor(.plantPrimary)
+                                    Text("8:00 AM").font(.headline).foregroundColor(.plantText)
+                                }
+                                Text("Location: \(plant.location)").font(.caption).foregroundColor(.gray)
+                                
+                                Button(action: {
+                                    viewModel.logActivity(action: "Watered", plantName: plant.name, icon: "drop.fill", color: .blue)
+                                    NotificationService.shared.scheduleNotification(title: "Watering Done!", body: "You watered \(plant.name).")
+                                }) {
+                                    Text("Mark as Watered")
+                                        .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity)
+                                        .padding().background(Color.plantPrimary).clipShape(RoundedRectangle(cornerRadius: 16))
+                                }.padding(.top, 8)
+                            }.padding(20)
                         }
-                        .padding().frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 20))
+                        .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 24))
+                        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                         
-                        NavigationLink(destination: WateringScheduleView(plant: plant)) {
-                            Text("Set Watering Schedule")
-                                .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding()
-                                .background(Color.plantPrimary).cornerRadius(15)
+                        Text("Other Plants").font(.title3).fontWeight(.bold).foregroundColor(.plantText).padding(.top, 10)
+                        
+                        VStack(spacing: 12) {
+                            ForEach(viewModel.plants) { otherPlant in
+                                if otherPlant.id != plant.id {
+                                    HStack {
+                                        Image(systemName: "leaf.fill").foregroundColor(.plantPrimary)
+                                            .frame(width: 50, height: 50).background(Color.plantBackground).clipShape(RoundedRectangle(cornerRadius: 12))
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(otherPlant.name).font(.headline).foregroundColor(.plantText)
+                                            Text("Tomorrow • 8:00 AM").font(.caption).foregroundColor(.gray)
+                                        }
+                                        Spacer()
+                                        Circle().fill(Color.gray.opacity(0.3)).frame(width: 8, height: 8)
+                                    }.padding(16).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 16))
+                                }
+                            }
                         }
                     }.padding(20)
                 }
             }
-            .navigationTitle("Plant Details")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Watering Schedule").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left").foregroundColor(.plantText)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(action: { dismiss() }) { Image(systemName: "chevron.left").foregroundColor(.plantText) }
                 }
             }
         }
-    }
-    
-    func loadImageFromDisk(name: String) -> UIImage? {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let filePath = paths[0].appendingPathComponent("\(name).png")
-        return UIImage(contentsOfFile: filePath.path)
     }
 }
