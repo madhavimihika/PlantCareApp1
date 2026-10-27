@@ -1,0 +1,100 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode version
+        run: |
+          ls /Applications | grep Xcode
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      #Real iPhone build (Release)
+      - name: Build for iPhone (unsigned, Release)
+        run: |
+          xcodebuild build \
+            -project PlantCareApp.xcodeproj \
+            -scheme PlantCareApp \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build-device \
+            CODE_SIGNING_ALLOWED=NO \
+            ENABLE_DEBUG_DYLIB=NO
+
+      - name: Package IPA
+        run: |
+          mkdir Payload
+          cp -r build-device/Build/Products/Release-iphoneos/PlantCareApp.app Payload/
+          zip -r PlantCareApp.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlantCareApp-ipa
+          path: PlantCareApp.ipa
+
+      # Simulator build
+      - name: Build for simulator
+        run: |
+          xcodebuild build \
+            -project PlantCareApp.xcodeproj \
+            -scheme PlantCareApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Zip simulator app for Appetize
+        run: |
+          cd build/Build/Products/Debug-iphonesimulator
+          zip -r $GITHUB_WORKSPACE/PlantCareApp-simulator.zip PlantCareApp.app
+
+      - name: Upload simulator zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlantCareApp-simulator
+          path: PlantCareApp-simulator.zip
+
+      # Simulator screenshots + video
+      - name: Boot simulator
+        continue-on-error: true
+        run: |
+          UDID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | grep -oE '[0-9A-F-]{36}')
+          echo "UDID=$UDID" >> $GITHUB_ENV
+          xcrun simctl boot $UDID
+          xcrun simctl bootstatus $UDID -b
+
+      - name: Install, launch, record and screenshot
+        continue-on-error: true
+        run: |
+          xcrun simctl io $UDID recordVideo demo.mp4 &
+          REC=$!
+          sleep 2
+          xcrun simctl install $UDID build/Build/Products/Debug-iphonesimulator/PlantCareApp.app
+          xcrun simctl launch $UDID NIBM.PlantCareApp
+          sleep 8
+          xcrun simctl io $UDID screenshot screen1.png
+          sleep 5
+          xcrun simctl io $UDID screenshot screen2.png
+          kill -INT $REC
+          sleep 3
+
+      - name: Upload screenshots and video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-output
+          path: |
+            *.png
+            demo.mp4
