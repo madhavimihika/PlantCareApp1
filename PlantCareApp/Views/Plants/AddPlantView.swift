@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct AddPlantView: View {
     @Environment(\.dismiss) var dismiss
@@ -6,6 +7,8 @@ struct AddPlantView: View {
     @State private var plantName = ""
     @State private var botanicalName = ""
     @State private var location = "Bedroom"
+     @State private var selectedItem: PhotosPickerItem? = nil// handle image picking
+    @State private var selectedImage: UIImage? = nil// handle image picking
     
     @ObservedObject var viewModel = MyPlantsViewModel.shared
     
