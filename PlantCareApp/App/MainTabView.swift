@@ -4,6 +4,12 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
+//
+//  MainTabView.swift
+//  PlantCareApp
+//
+//  Created by cobsccomp251p-24 on 2026-10-23.
+//
 import SwiftUI
 
 struct MainTabView: View {
@@ -16,26 +22,13 @@ struct MainTabView: View {
                 .tabItem { Label("My Plant", systemImage: "leaf.fill") }
             
             ScanView()
-                .tabItem{Label ("Scan",systemImage: "camera.viewfinder") }
+                .tabItem { Label("Scan", systemImage: "camera.viewfinder") }
             
             NurseriesView()
-                            .tabItem {
-                                Label("Nurseries", systemImage: "mappin.and.ellipse")
-                            }
+                .tabItem { Label("Nurseries", systemImage: "mappin.and.ellipse") }
             
-            VStack {
-                Text("Profile")
-                    .font(.title)
-                Button("Log Out") {
-                    try? AuthService.shared.signOut()
-                }
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.top, 20)
-            }
-            .tabItem { Label("Profile", systemImage: "person.fill") }
+            ProfileView()
+                .tabItem { Label("Profile", systemImage: "person.fill") }
         }
         .tint(.plantPrimary)
     }
