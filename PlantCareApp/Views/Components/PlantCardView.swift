@@ -2,56 +2,31 @@ import SwiftUI
 
 struct PlantCardView: View {
     let plant: Plant
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Image Area
-            ZStack(alignment: .topTrailing) {
-                Color.gray.opacity(0.1)
-                    .frame(height: 140)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                
-                Image(systemName: plant.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 60, height: 60)
-                    .foregroundColor(.plantSecondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                // Status Dot
-                Circle()
-                    .fill(plant.health == .healthy ? Color.plantPrimary : Color.orange)
-                    .frame(width: 10, height: 10)
-                    .padding(10)
+        VStack(alignment: .leading, spacing: 12) {
+            // Fixed height image area
+            Image(systemName: "leaf.fill")
+                .resizable().scaledToFit().frame(width: 40, height: 40)
+                .foregroundColor(.plantPrimary)
+                .frame(maxWidth: .infinity).frame(height: 100) // <-- Fixed height
+                .background(Color.plantBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(plant.name).font(.headline).foregroundColor(.plantText).lineLimit(1)
+                Text(plant.location).font(.caption).foregroundColor(.gray).lineLimit(1)
             }
             
-            // Details Area
-            VStack(alignment: .leading, spacing: 4) {
-                Text(plant.name)
-                    .font(.headline)
-                    .foregroundColor(.plantText)
-                
-                Text("\(plant.botanicalName) • \(plant.location)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                
-                // Badge
-                Text(plant.health.rawValue)
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundColor(plant.health == .healthy ? .plantPrimary : .orange)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(plant.health == .healthy ? Color.plantBackground : Color.orange.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.top, 4)
-            }
-            .padding(.horizontal, 4)
+            Text(plant.health.rawValue)
+                .font(.caption2).fontWeight(.bold)
+                .foregroundColor(plant.health == .healthy ? .plantPrimary : .orange)
+                .padding(.horizontal, 8).padding(.vertical, 4)
+                .background(plant.health == .healthy ? Color.plantBackground : Color.orange.opacity(0.1))
+                .clipShape(Capsule())
         }
-        .padding(10)
+        .padding(12)
         .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
     }
 }

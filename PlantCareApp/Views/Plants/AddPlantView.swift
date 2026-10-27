@@ -19,24 +19,18 @@ struct AddPlantView: View {
                     TextField("Location (e.g., Living Room)", text: $location)
                 }
                 
-                Section {
-                    Button("Save Plant") {
-                        viewModel.addPlant(
-                            name: plantName.isEmpty ? "New Plant" : plantName,
-                            botanicalName: botanicalName.isEmpty ? "Unknown" : botanicalName,
-                            location: location
-                        )
+             Section {
+                    Button(action: {
+                        viewModel.addPlant(name: plantName.isEmpty ? "New Plant" : plantName, botanicalName: botanicalName.isEmpty ? "Unknown" : botanicalName, location: location)
                         dismiss()
+                    }) {
+                        Text("Save Plant").font(.headline).frame(maxWidth: .infinity).foregroundColor(.white)
                     }
+                    .listRowBackground(Color.plantPrimary)
                 }
             }
-            .navigationTitle("Add New Plant")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") { dismiss() }
-                }
-            }
+            .navigationTitle("Add New Plant").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .navigationBarLeading) { Button("Cancel") { dismiss() } } }
         }
     }
 }
