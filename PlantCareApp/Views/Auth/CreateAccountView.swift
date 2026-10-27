@@ -4,7 +4,6 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
-
 import SwiftUI
 
 struct CreateAccountView: View {
@@ -17,26 +16,37 @@ struct CreateAccountView: View {
     
     var body: some View {
         ZStack {
-            Color.init("plantBackground").ignoresSafeArea()
+            Color.plantBackground.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Create account").font(.largeTitle).fontWeight(.bold).foregroundColor(Color.init("plantText"))
+                        Text("Create account").font(.largeTitle).fontWeight(.bold).foregroundColor(.plantText)
                         Text("Join us to keep your plants happy.").font(.subheadline).foregroundColor(.gray)
                     }.padding(.top, 20)
                     
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Full Name").font(.headline).foregroundColor(Color.init("plantText"))
-                        TextField("Maya Silva", text: $fullName).padding().background(Color(.systemBackground)).cornerRadius(10)
-                            .textContentType(.name)
+                        Text("Full Name").font(.headline).foregroundColor(.plantText)
+                        TextField("Maya Silva", text: $fullName)
+                            .padding()
+                            .background(Color.white) // <-- FIX: Changed from systemBackground
+                            .cornerRadius(10)
+                            .foregroundColor(.black) // <-- FIX: Force black text
                         
-                        Text("Email").font(.headline).foregroundColor(Color.init("plantText"))
+                        Text("Email").font(.headline).foregroundColor(.plantText)
                         TextField("you@example.com", text: $email)
-                            .padding().background(Color(.systemBackground)).cornerRadius(10).keyboardType(.emailAddress).textInputAutocapitalization(.never).textContentType(.emailAddress)
+                            .padding()
+                            .background(Color.white) // <-- FIX
+                            .cornerRadius(10)
+                            .foregroundColor(.black) // <-- FIX
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
                         
-                        Text("Password").font(.headline).foregroundColor(Color.init("plantText"))
-                        SecureField("••••••••", text: $password).padding().background(Color(.systemBackground)).cornerRadius(10)
-                            .textContentType(.newPassword)
+                        Text("Password").font(.headline).foregroundColor(.plantText)
+                        SecureField("••••••••", text: $password)
+                            .padding()
+                            .background(Color.white) // <-- FIX
+                            .cornerRadius(10)
+                            .foregroundColor(.black) // <-- FIX
                     }
                     
                     if !errorMessage.isEmpty { Text(errorMessage).foregroundColor(.red).font(.footnote) }
@@ -63,4 +73,3 @@ struct CreateAccountView: View {
         }.navigationBarTitleDisplayMode(.inline)
     }
 }
-
