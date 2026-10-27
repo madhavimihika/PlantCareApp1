@@ -4,6 +4,13 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
+//
+//  DashboardView.swift
+//  PlantCareApp
+//
+//  Created by cobsccomp251p-24 on 2026-10-23.
+//
+
 import SwiftUI
 
 struct DashboardView: View {
@@ -21,11 +28,13 @@ struct DashboardView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(viewModel.currentDate)
                                 .font(.subheadline).foregroundColor(.gray)
-                            Text("\(viewModel.greeting), Maya")
+                            
+                            //dynamic userName
+                            Text("\(viewModel.greeting), \(viewModel.userName)")
                                 .font(.system(size: 28, weight: .bold)).foregroundColor(.plantText)
                         }.padding(.top, 10)
                         
-                        // Garden Health Card
+                        // Gardenhealth Card
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Garden health")
                                 .font(.subheadline).fontWeight(.medium).foregroundColor(.white.opacity(0.9))
@@ -63,7 +72,7 @@ struct DashboardView: View {
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         
-                        // Today's Care
+                        // Todays Care
                         HStack {
                             Text("Today's care").font(.title3).fontWeight(.bold).foregroundColor(.plantText)
                             Spacer()

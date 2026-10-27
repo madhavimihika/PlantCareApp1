@@ -2,7 +2,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct ProfileView: View {
-    @State private var userName = "Maya"
+    @State private var userName = "User"
+    @State private var userInitial = "U"
     @State private var notificationsEnabled = true
     
     var body: some View {
@@ -13,10 +14,12 @@ struct ProfileView: View {
                     VStack(spacing: 20) {
                         // Profile Header
                         VStack {
-                            Text("M")
+                            // Show the first letter of the name
+                            Text(userInitial)
                                 .font(.largeTitle).fontWeight(.bold).foregroundColor(.white)
                                 .frame(width: 80, height: 80)
                                 .background(Color.plantPrimary).clipShape(Circle())
+                            
                             Text(userName).font(.title2).fontWeight(.bold)
                             Text("Plant Lover").font(.subheadline).foregroundColor(.gray)
                         }.padding(.top, 20)
@@ -51,6 +54,26 @@ struct ProfileView: View {
                 }
             }
             .navigationTitle("Profile")
+            .onAppear {
+                fetchUserData()
+            }
+        }
+    }
+    
+    // Fetch the user from Firebase
+    func fetchUserData() {
+        if let user = Auth.auth().currentUser {
+            if let displayName = user.displayName, !displayName.isEmpty {
+                userName = displayName
+            } else if let email = user.email {
+                let namePart = email.components(separatedBy: "@").first ?? "User"
+                userName = namePart.prefix(1).uppercased() + namePart.dropFirst()
+            }
+            
+            // Set the initial letter for the circle
+            if let firstChar = userName.first {
+                userInitial = String(firstChar).uppercased()
+            }
         }
     }
 }

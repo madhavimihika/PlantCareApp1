@@ -2,20 +2,24 @@
 //  ScanResultView.swift
 //  PlantCareApp
 //
-//  Created by cobsccomp251p-24 on 2026-10-23.
-//
 
-import Foundation
 import SwiftUI
 
 struct ScanResultView: View {
     var diseaseName: String
     var confidence: Double
     
+  
+    @StateObject private var viewModel = MyPlantsViewModel.shared
+    @Environment(\.dismiss) var dismiss
     
     var cleanDiseaseName: String {
         return diseaseName.replacingOccurrences(of: "___", with: " ")
             .replacingOccurrences(of: "_", with: " ")
+    }
+    
+    var safeConfidence: Double {
+        return min(max(confidence, 0.0), 1.0)
     }
     
     var body: some View {
@@ -25,7 +29,7 @@ struct ScanResultView: View {
                 VStack(spacing: 20) {
                     // Image Header
                     ZStack(alignment: .bottomLeading) {
-                        Color.gray.opacity(0.3).frame(height: 200).cornerRadius(20)
+                        Color.gray.opacity(0.3).frame(height: 200).clipShape(RoundedRectangle(cornerRadius: 20))
                         Text("Scanned Plant").font(.headline).foregroundColor(.white).padding()
                     }
                     
@@ -33,7 +37,8 @@ struct ScanResultView: View {
                     VStack(alignment: .leading, spacing: 15) {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.orange)
-                            Text(cleanDiseaseName).font(.title3).fontWeight(.bold)
+                            Text(cleanDiseaseName)
+                                .font(.title3).fontWeight(.bold).foregroundColor(.plantText)
                         }
                         
                         Text("Detected by Core ML").font(.caption).foregroundColor(.gray)
@@ -41,20 +46,25 @@ struct ScanResultView: View {
                         HStack {
                             Text("Confidence").font(.subheadline).foregroundColor(.gray)
                             Spacer()
-                            Text("\(Int(confidence * 100))%").font(.subheadline).fontWeight(.bold).foregroundColor(.plantPrimary)
+                            Text("\(Int(safeConfidence * 100))%")
+                                .font(.subheadline).fontWeight(.bold).foregroundColor(.plantPrimary)
                         }
                         
-                        ProgressView(value: confidence).tint(.plantPrimary)
+                        ProgressView(value: safeConfidence).tint(.plantPrimary)
                         
                         HStack {
-                            Text(confidence > 0.8 ? "High certainty" : "Low certainty")
-                                .font(.caption).padding(6).background(confidence > 0.8 ? Color.green.opacity(0.1) : Color.orange.opacity(0.1)).cornerRadius(8)
+                            Text(safeConfidence > 0.8 ? "High certainty" : "Low certainty")
+                                .font(.caption).fontWeight(.bold)
+                                .foregroundColor(safeConfidence > 0.8 ? .green : .orange)
+                                .padding(.horizontal, 10).padding(.vertical, 5)
+                                .background(safeConfidence > 0.8 ? Color.green.opacity(0.1) : Color.orange.opacity(0.1))
+                                .clipShape(Capsule())
                         }
                         
                         Text("Based on the image provided, our on-device model predicts this condition. Caught early, this usually clears up with simple care.")
                             .font(.footnote).foregroundColor(.gray)
                     }
-                    .padding(20).background(Color.white).cornerRadius(20)
+                    .padding(20).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 20))
                     
                     // Treatment Steps
                     VStack(alignment: .leading, spacing: 15) {
@@ -64,11 +74,30 @@ struct ScanResultView: View {
                         TreatmentRow(number: "2", title: "Keep leaves dry", subtitle: "Water the soil, not the leaves")
                         TreatmentRow(number: "3", title: "Improve airflow", subtitle: "Then rescan in 7 days")
                     }
-                    .padding(20).background(Color.white).cornerRadius(20)
+                    .padding(20).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 20))
                     
-                    Button(action: {}) {
-                        Text("Save to Care History").font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding()
-                            .background(Color.plantPrimary).cornerRadius(15)
+                    // THAT SAVES TO CARE HISTORY
+                    Button(action: {
+                    
+                        viewModel.logActivity(
+                            action: "Scanned Plant",
+                            plantName: cleanDiseaseName,
+                            icon: "camera.viewfinder",
+                            color: .green
+                        )
+                        
+                        // Schedule a local notification
+                        NotificationService.shared.scheduleNotification(
+                            title: "Scan Saved!",
+                            body: "The scan for \(cleanDiseaseName) was added to your history."
+                        )
+                        
+                       
+                        dismiss()
+                    }) {
+                        Text("Save to Care History")
+                            .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding()
+                            .background(Color.plantPrimary).clipShape(RoundedRectangle(cornerRadius: 15))
                     }
                 }
                 .padding(.horizontal, 20).padding(.bottom, 30)
@@ -86,7 +115,7 @@ struct TreatmentRow: View {
             Text(number).font(.subheadline).fontWeight(.bold).foregroundColor(.white)
                 .frame(width: 24, height: 24).background(Color.plantPrimary).clipShape(Circle())
             VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.subheadline).fontWeight(.bold)
+                Text(title).font(.subheadline).fontWeight(.bold).foregroundColor(.plantText)
                 Text(subtitle).font(.caption).foregroundColor(.gray)
             }
         }
