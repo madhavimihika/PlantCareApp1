@@ -58,3 +58,11 @@ class MyPlantsViewModel: ObservableObject {
     var healthyCount: Int { plants.filter { $0.health == .healthy }.count }
     var needsCareCount: Int { plants.filter { $0.health == .needsCare }.count }
 }
+struct CareHistoryItem: Identifiable {
+    let id = UUID()
+    let date: String
+    let action: String
+    let plantName: String
+    let icon: String
+    let color: Color
+}
