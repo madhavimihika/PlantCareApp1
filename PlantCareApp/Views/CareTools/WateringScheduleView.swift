@@ -29,7 +29,7 @@ struct WateringScheduleView: View {
                                 // Details Area
                                 VStack(alignment: .leading, spacing: 12) {
                                     Text("TOMORROW").font(.caption).fontWeight(.bold).foregroundColor(.gray)
-                                    Text(firstPlant.name).font(.title2).fontWeight(.bold).foregroundColor(.plantText) // <-- Name shows here
+                                    Text(firstPlant.name).font(.title2).fontWeight(.bold).foregroundColor(.plantText)
                                     
                                     HStack {
                                         Image(systemName: "clock.fill").foregroundColor(.plantPrimary)
@@ -37,7 +37,11 @@ struct WateringScheduleView: View {
                                     }
                                     Text("Location: \(firstPlant.location)").font(.caption).foregroundColor(.gray)
                                     
-                                    Button(action: {}) {
+                                    // FIXED: The button now logs the activity and schedules a notification
+                                    Button(action: {
+                                        viewModel.logActivity(action: "Watered", plantName: firstPlant.name, icon: "drop.fill", color: .blue)
+                                        NotificationService.shared.scheduleNotification(title: "Watering Done!", body: "You watered \(firstPlant.name).")
+                                    }) {
                                         Text("Mark as Watered")
                                             .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity)
                                             .padding().background(Color.plantPrimary).clipShape(RoundedRectangle(cornerRadius: 16))
