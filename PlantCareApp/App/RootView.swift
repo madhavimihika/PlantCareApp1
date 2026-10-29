@@ -13,10 +13,17 @@ struct RootView: View {
     
     // add the Face ID state
     @State private var isUnlocked = false
-    
+    // add this line to check onboarding ststus
+
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
+   
     var body: some View {
         Group {
-            if user != nil {
+            // add ONBOARDING FIRST
+            if !hasSeenOnboarding {
+                OnboardingView(isAuthenticated: $isLoggedIn)
+            }
+            else if user != nil {
                 // Check if the user is unlocked
                 if isUnlocked {
                     MainTabView()
@@ -27,6 +34,7 @@ struct RootView: View {
                 WelcomeView(isAuthenticated: $isLoggedIn)
             }
         }
+        
         .id(user?.uid ?? "guest")
         .onAppear {
             _ = Auth.auth().addStateDidChangeListener { _, firebaseUser in

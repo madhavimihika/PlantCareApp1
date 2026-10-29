@@ -25,7 +25,7 @@ struct MyPlantsView: View {
                     HStack {
                         Text("My Plants")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.plantText) // <-- Fixed visibility
+                            .foregroundColor(.plantText) // Fixed visibility
                         Spacer()
                         Button(action: { showingAddPlant = true }) {
                             Image(systemName: "plus")
