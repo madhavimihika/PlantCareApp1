@@ -140,7 +140,7 @@ struct DashboardView: View {
                     Label("Care Tools", systemImage: "wrench.and.screwdriver.fill")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.Black)
+                        .foregroundColor(.black)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(Color.plantPrimary)
