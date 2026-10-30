@@ -19,3 +19,7 @@ struct Plant: Identifiable, Codable {
     let health: PlantHealth
     let imageName: String
 }
+//real data tracking new
+ var nextWaterDate: Date = Date().addingTimeInterval(86400) 
+
+ var nextFertilizeDate: Date = Date().addingTimeInterval(604800) //default:1
