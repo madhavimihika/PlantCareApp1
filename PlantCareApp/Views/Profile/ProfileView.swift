@@ -7,9 +7,13 @@ struct ProfileView: View {
     @State private var userEmail = "loading@email.com"
     
     // Settings States
-    @State private var notificationsEnabled = true
+    @State private var notificationsEnabled = false
     @State private var darkModeEnabled = false
     @State private var notificationTime = Date()
+    
+    // Edit Name States
+    @State private var showingEditAlert = false
+    @State private var newName = ""
     
     var body: some View {
         NavigationStack {
@@ -31,7 +35,7 @@ struct ProfileView: View {
                             
                             VStack(spacing: 4) {
                                 Text(userName)
-                                    .font(.title2).fontWeight(.bold).foregroundColor(.plantText)
+                                    .font(.title2).fontWeight(.bold).foregroundColor(.black)
                                 Text(userEmail)
                                     .font(.subheadline).foregroundColor(.gray)
                             }
@@ -40,11 +44,20 @@ struct ProfileView: View {
                         
                         // Account Section 
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("ACCOUNT").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
+                            Text("ACCOUNT").font(.caption).fontWeight(.bold).foregroundColor(.black).padding(.leading, 10)
                             
                             VStack(spacing: 0) {
-                                SettingsRow(icon: "person.fill", title: "Edit Profile", color: .blue)
+                                // FIX: Made this a button that opens the alert
+                                Button(action: {
+                                    newName = userName
+                                    showingEditAlert = true
+                                }) {
+                                    SettingsRow(icon: "person.fill", title: "Edit Profile", color: .blue)
+                                }
+                                .buttonStyle(.plain)
+                                
                                 Divider().padding(.leading, 50)
+                                
                                 SettingsRow(icon: "lock.fill", title: "Change Password", color: .orange)
                             }
                             .background(Color.white)
@@ -53,21 +66,28 @@ struct ProfileView: View {
                         
                         // Preferences Section 
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("PREFERENCES").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
+                            Text("PREFERENCES").font(.caption).fontWeight(.bold).foregroundColor(.black).padding(.leading, 10)
                             
                             VStack(spacing: 0) {
                                 HStack {
                                     Image(systemName: "bell.fill").foregroundColor(.plantPrimary).frame(width: 30)
-                                    Text("Push Notifications").foregroundColor(.plantText)
+                                    Text("Push Notifications").foregroundColor(.black)
                                     Spacer()
-                                    Toggle("", isOn: $notificationsEnabled).tint(.plantPrimary)
+                                    // FIX: Toggle now triggers actual permission request
+                                    Toggle("", isOn: $notificationsEnabled)
+                                        .tint(.plantPrimary)
+                                        .onChange(of: notificationsEnabled) { newValue in
+                                            if newValue {
+                                                NotificationService.shared.requestPermission()
+                                            }
+                                        }
                                 }.padding()
                                 
                                 Divider().padding(.leading, 50)
                                 
                                 HStack {
                                     Image(systemName: "clock.fill").foregroundColor(.plantPrimary).frame(width: 30)
-                                    Text("Notification Time").foregroundColor(.plantText)
+                                    Text("Notification Time").foregroundColor(.black)
                                     Spacer()
                                     DatePicker("", selection: $notificationTime, displayedComponents: .hourAndMinute)
                                         .labelsHidden()
@@ -77,7 +97,7 @@ struct ProfileView: View {
                                 
                                 HStack {
                                     Image(systemName: "moon.fill").foregroundColor(.purple).frame(width: 30)
-                                    Text("Dark Mode").foregroundColor(.plantText)
+                                    Text("Dark Mode").foregroundColor(.black)
                                     Spacer()
                                     Toggle("", isOn: $darkModeEnabled).tint(.plantPrimary)
                                 }.padding()
@@ -88,7 +108,7 @@ struct ProfileView: View {
                         
                         // Support Section 
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("SUPPORT").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
+                            Text("SUPPORT").font(.caption).fontWeight(.bold).foregroundColor(.black).padding(.leading, 10)
                             
                             VStack(spacing: 0) {
                                 SettingsRow(icon: "questionmark.circle.fill", title: "Help & Support", color: .green)
@@ -117,6 +137,22 @@ struct ProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 fetchUserData()
+                NotificationService.shared.checkPermission { isEnabled in
+                    notificationsEnabled = isEnabled
+                }
+            }
+            // FIX: Added the alert for editing the name
+            .alert("Edit Name", isPresented: $showingEditAlert) {
+                TextField("Enter new name", text: $newName)
+                Button("Cancel", role: .cancel) { }
+                Button("Save") {
+                    Task {
+                        try? await AuthService.shared.updateDisplayName(newName)
+                        fetchUserData()
+                    }
+                }
+            } message: {
+                Text("This will update your display name in Firebase.")
             }
         }
     }
@@ -153,7 +189,7 @@ struct SettingsRow: View {
             Image(systemName: icon)
                 .foregroundColor(color)
                 .frame(width: 30)
-            Text(title).foregroundColor(.plantText)
+            Text(title).foregroundColor(.black)
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.caption)

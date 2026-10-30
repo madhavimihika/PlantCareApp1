@@ -20,6 +20,12 @@ class AuthService {
         return authResult.user
     }
     
+    func updateDisplayName(_ newName: String) async throws {
+        if let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest() {
+            changeRequest.displayName = newName
+            try await changeRequest.commitChanges()
+        }
+    }
     func signOut() throws {
         try Auth.auth().signOut()
     }
