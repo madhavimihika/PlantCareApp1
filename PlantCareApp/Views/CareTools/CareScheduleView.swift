@@ -111,7 +111,7 @@ private struct CareHeroCard: View {
             .overlay(alignment: .topTrailing) {
                 Image(systemName: kind.icon)
                     .font(.system(size: 110))
-                    .foregroundColor(.white.opacity(0.15))
+                    .foregroundColor(.black.opacity(0.15))
                     .rotationEffect(.degrees(-15))
                     .offset(x: 10, y: -5)
             }
@@ -122,10 +122,10 @@ private struct CareHeroCard: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(plant.name)
                             .font(.system(.title3, design: .rounded).weight(.bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                         Label(plant.location, systemImage: "mappin.circle.fill")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.9))
+                            .foregroundColor(.black.opacity(0.9))
                     }
                     Spacer()
                 }.padding(18)
@@ -142,7 +142,7 @@ private struct CareHeroCard: View {
             Divider()
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Repeat").font(.caption).foregroundColor(.gray)
+                    Text("Repeat").font(.caption).foregroundColor(.black)
                     Text(kind.intervalText(interval)).font(.headline).foregroundColor(.plantText)
                 }
                 Spacer()
@@ -158,7 +158,7 @@ private struct CareHeroCard: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { withAnimation { justDone = false } }
             } label: {
                 Label(justDone ? "Done!" : kind.doneButton, systemImage: justDone ? "checkmark.circle.fill" : kind.icon)
-                    .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 15)
+                    .font(.headline).foregroundColor(.black).frame(maxWidth: .infinity).padding(.vertical, 15)
                     .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(justDone ? Color.green : Color.plantPrimary))
             }
         }.padding(20)

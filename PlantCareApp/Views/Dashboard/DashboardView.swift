@@ -66,7 +66,7 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(viewModel.currentDate)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
 
                 Text("\(viewModel.greeting), \(viewModel.userName)")
                     .font(.system(size: 28, weight: .bold))
@@ -79,7 +79,7 @@ struct DashboardView: View {
 
             Text(userInitial)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(.black)
                 .frame(width: 44, height: 44)
                 .background(Color.plantPrimary)
                 .clipShape(Circle())
@@ -104,14 +104,14 @@ struct DashboardView: View {
                     .foregroundColor(Color.plantText)
                 Text("22° - Bright indirect light")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
             }
 
             Spacer()
 
             Label("Sri Lanka", systemImage: "location.fill")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(.black)
         }
         .padding(16)
         .dashCardStyle()
@@ -130,7 +130,7 @@ struct DashboardView: View {
                     if !viewModel.careTasks.isEmpty {
                         Text("\(doneCount) of \(viewModel.careTasks.count) done")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.black)
                     }
                 }
 
@@ -140,7 +140,7 @@ struct DashboardView: View {
                     Label("Care Tools", systemImage: "wrench.and.screwdriver.fill")
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.Black)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(Color.plantPrimary)

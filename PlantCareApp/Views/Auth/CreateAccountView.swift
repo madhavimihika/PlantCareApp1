@@ -21,7 +21,7 @@ struct CreateAccountView: View {
                 VStack(alignment: .leading, spacing: 25) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Create account").font(.largeTitle).fontWeight(.bold).foregroundColor(.plantText)
-                        Text("Join us to keep your plants happy.").font(.subheadline).foregroundColor(.gray)
+                        Text("Join us to keep your plants happy.").font(.subheadline).foregroundColor(.black)
                     }.padding(.top, 20)
                     
                     VStack(alignment: .leading, spacing: 15) {
@@ -64,7 +64,7 @@ struct CreateAccountView: View {
                             ProgressView().tint(.white).frame(maxWidth: .infinity).padding()
                                 .background(Color.plantPrimary).cornerRadius(12)
                         } else {
-                            Text("Create Account").font(.headline).foregroundColor(.white).frame(maxWidth: .infinity)
+                            Text("Create Account").font(.headline).foregroundColor(.black).frame(maxWidth: .infinity)
                                 .padding().background(Color.plantPrimary).cornerRadius(12)
                         }
                     }.disabled(isLoading)

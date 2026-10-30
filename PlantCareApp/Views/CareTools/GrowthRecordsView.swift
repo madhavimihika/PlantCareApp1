@@ -74,7 +74,7 @@ struct GrowthRecordsView: View {
                             PlantPhoto(name: item.name, size: 26, corner: 13)
                             Text(item.name).font(.subheadline.weight(.semibold))
                         }
-                        .foregroundColor(isSelected ? .white : .plantText)
+                        .foregroundColor(isSelected ? .black : .plantText)
                         .padding(.leading, 6).padding(.trailing, 14).padding(.vertical, 6)
                         .background(Capsule().fill(isSelected ? Color.plantPrimary : Color.white))
                     }
@@ -111,7 +111,7 @@ struct GrowthRecordsView: View {
     private func stat(value: String, label: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value).font(.system(.title3, design: .rounded).weight(.bold)).foregroundColor(color)
-            Text(label).font(.caption).foregroundColor(.gray)
+            Text(label).font(.caption).foregroundColor(.black)
         }
     }
 
@@ -167,7 +167,7 @@ struct GrowthRecordsView: View {
                     Image(systemName: "ruler").foregroundColor(.plantPrimary).frame(width: 42, height: 42).background(Color.plantPrimary.opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     VStack(alignment: .leading, spacing: 3) {
                         Text(entry.date.formatted(date: .abbreviated, time: .omitted)).font(.headline).foregroundColor(.plantText)
-                        Text("\(cm(entry.height)) • \(entry.leaves) leaves").font(.caption).foregroundColor(.gray)
+                        Text("\(cm(entry.height)) • \(entry.leaves) leaves").font(.caption).foregroundColor(.black)
                     }
                     Spacer()
                     if index > 0 {
@@ -177,7 +177,7 @@ struct GrowthRecordsView: View {
                     Menu {
                         Button(role: .destructive) { viewModel.deleteGrowth(entry, for: current) } label: { Label("Delete", systemImage: "trash") }
                     } label: {
-                        Image(systemName: "ellipsis").foregroundColor(.gray).frame(width: 30, height: 30)
+                        Image(systemName: "ellipsis").foregroundColor(.black).frame(width: 30, height: 30)
                     }
                 }.padding(14).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
@@ -188,7 +188,7 @@ struct GrowthRecordsView: View {
         VStack(spacing: 12) {
             Image(systemName: "leaf.fill").font(.system(size: 44)).foregroundColor(.plantPrimary.opacity(0.6))
             Text("No plants yet").font(.headline).foregroundColor(.plantText)
-            Text("Add a plant in My Plants to start tracking its growth.").font(.subheadline).foregroundColor(.gray).multilineTextAlignment(.center)
+            Text("Add a plant in My Plants to start tracking its growth.").font(.subheadline).foregroundColor(.black).multilineTextAlignment(.center)
         }.padding(40)
     }
 
@@ -233,7 +233,7 @@ private struct AddGrowthSheet: View {
         HStack(spacing: 14) {
             Image(systemName: icon).foregroundColor(.plantPrimary).frame(width: 44, height: 44).background(Color.plantPrimary.opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.caption).foregroundColor(.gray)
+                Text(title).font(.caption).foregroundColor(.black)
                 Text(value).font(.system(.title2, design: .rounded).weight(.bold)).foregroundColor(.plantText)
             }
             Spacer()

@@ -12,11 +12,11 @@ struct CareToolsView: View {
                         
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("MY PLANT CARE").font(.caption).fontWeight(.bold).foregroundColor(.gray).tracking(1)
+                                Text("MY PLANT CARE").font(.caption).fontWeight(.bold).foregroundColor(.black).tracking(1)
                                 Text("Care tools").font(.system(size: 34, weight: .bold, design: .serif)).foregroundColor(.plantText)
                             }
                             Spacer()
-                            Text("M").font(.headline).foregroundColor(.white).frame(width: 40, height: 40).background(Color.orange.opacity(0.7)).clipShape(Circle())
+                            Text("M").font(.headline).foregroundColor(.black).frame(width: 40, height: 40).background(Color.orange.opacity(0.7)).clipShape(Circle())
                         }.padding(.top, 10)
                         
                         ZStack(alignment: .bottomLeading) {
@@ -25,7 +25,7 @@ struct CareToolsView: View {
                                 .overlay(LinearGradient(gradient: Gradient(colors: [.clear, .black.opacity(0.6)]), startPoint: .center, endPoint: .bottom).clipShape(RoundedRectangle(cornerRadius: 20)))
                             
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("3 plants need\nyour attention").font(.title).fontWeight(.bold).foregroundColor(.white)
+                                Text("3 plants need\nyour attention").font(.title).fontWeight(.bold).foregroundColor(.black)
                                 Button(action: {}) {
                                     Text("View care plan").font(.footnote).fontWeight(.bold).foregroundColor(.plantPrimary).padding(.horizontal, 16).padding(.vertical, 8).background(Color.white).clipShape(Capsule())
                                 }
@@ -34,7 +34,7 @@ struct CareToolsView: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Organize your garden").font(.title2).fontWeight(.bold).foregroundColor(.plantText)
-                            Text("Everything your plants need, in one place.").font(.subheadline).foregroundColor(.gray)
+                            Text("Everything your plants need, in one place.").font(.subheadline).foregroundColor(.black)
                         }
                         
                         CareToolsGrid {

@@ -21,7 +21,7 @@ struct GardenHealthCard: View {
                         .foregroundColor(.plantText)
                     Text(viewModel.gardenSubtitle)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.black)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
@@ -46,7 +46,7 @@ struct GardenHealthCard: View {
                 .foregroundColor(color)
             Text(label)
                 .font(.caption2.weight(.medium))
-                .foregroundColor(.secondary)
+                .foregroundColor(.black)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
@@ -55,7 +55,7 @@ struct GardenHealthCard: View {
     }
 }
 
-// Donut chart split into healthy / need care / at risk
+// Donut chart-into healthy /need care /at risk
 struct GardenRing: View {
     let healthy: Int
     let needsCare: Int
@@ -91,7 +91,7 @@ struct GardenRing: View {
                         .foregroundColor(.plantText)
                     Text("health")
                         .font(.system(size: 9))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.black)
                 }
             }
         }

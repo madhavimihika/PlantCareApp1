@@ -12,8 +12,8 @@ struct ReminderSettingsView: View {
                 Color.plantBackground.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        Text("REMINDERS").font(.caption).fontWeight(.bold).foregroundColor(.gray)
-                        Text("Never forget to care for your plants again.").font(.subheadline).foregroundColor(.gray)
+                        Text("REMINDERS").font(.caption).fontWeight(.bold).foregroundColor(.black)
+                        Text("Never forget to care for your plants again.").font(.subheadline).foregroundColor(.black)
                         
                         VStack(spacing: 0) {
                             HStack {
@@ -37,12 +37,12 @@ struct ReminderSettingsView: View {
                         
                         Button(action: {
                             NotificationService.shared.scheduleNotification(
-                                title: "Time to water \(plantName)! 💧",
+                                title: "Time to water \(plantName)! ",
                                 body: "Your plant needs some love today."
                             )
                         }) {
                             Text("Schedule Test Notification (5s)")
-                                .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding()
+    .font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding()
                                 .background(Color.plantPrimary).clipShape(RoundedRectangle(cornerRadius: 15))
                         }
                         .padding(.top, 10)

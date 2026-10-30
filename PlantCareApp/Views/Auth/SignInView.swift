@@ -21,7 +21,7 @@ struct SignInView: View {
                 VStack(alignment: .leading, spacing: 25) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Welcome back").font(.largeTitle).fontWeight(.bold).foregroundColor(.plantText)
-                        Text("Sign in to keep caring for your plants.").font(.subheadline).foregroundColor(.gray)
+                        Text("Sign in to keep caring for your plants.").font(.subheadline).foregroundColor(.black)
                     }.padding(.top, 20)
                     
                     VStack(alignment: .leading, spacing: 15) {
