@@ -29,9 +29,10 @@ struct SignInView: View {
                         Text("Email").font(.headline).foregroundColor(.plantText)
                         TextField("you@example.com", text: $email)
                             .padding()
-                            .background(Color.plantBackground) // Light background
-                            .cornerRadius(10)
-                            .foregroundColor(.plantText) // Dark text
+                            .cornerRadius(10
+                            .background(Color.white)
+                  
+                            .foregroundColor(.black) 
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                         
@@ -41,15 +42,18 @@ struct SignInView: View {
                                 TextField("••••••••", text: $password)
                             } else {
                                 SecureField("••••••••", text: $password)
+                                    .foregroundColor(.black)//blac
                             }
                             Button(action: { isPasswordVisible.toggle() }) {
                                 Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill").foregroundColor(.gray)
                             }
                         }
                         .padding()
-                        .background(Color.plantBackground)
+                       
                         .cornerRadius(10)
-                        .foregroundColor(.plantText)
+                     
+                        .background(Color.white)
+                       
                     }
                     .padding(20)
                     .background(Color.white)

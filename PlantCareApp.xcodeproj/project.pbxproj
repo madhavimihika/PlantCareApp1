@@ -276,6 +276,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to scan your plants for diseases.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to unlock PlantCare.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -323,6 +324,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to scan your plants for diseases.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to unlock PlantCare.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

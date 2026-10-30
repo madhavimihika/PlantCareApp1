@@ -50,11 +50,11 @@ struct CareToolsView: View {
                         // Grid of Tools
                         LazyVGrid(columns: columns, spacing: 16) {
                             // chamged Pass the first plant (or a dummy plant if none exist)
-                            NavigationLink(destination: WateringScheduleView(plant: viewModel.plants.first ?? Plant(name: "Unknown", botanicalName: "", location: "", health: .healthy, imageName: ""))) {
+                           NavigationLink(destination: WateringScheduleView(plant: viewModel.plants.first ?? Plant(name: "Unknown", botanicalName: "Unknown", location: "Unknown", health: .healthy, imageName: "leaf.fill"))) {
                                 ToolCard(icon: "drop.fill", iconColor: .blue, title: "Watering", subtitle: "4 plants due this week")
-                            }
+                                }
                             .buttonStyle(PlainButtonStyle())
-                            
+    
                             ToolCard(icon: "sparkles", iconColor: .orange, title: "Fertilizer", subtitle: "Next feed in 2 days")
                             
                             NavigationLink(destination: GrowthRecordsView()) {

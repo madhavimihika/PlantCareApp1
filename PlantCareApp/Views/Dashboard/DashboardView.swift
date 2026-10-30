@@ -4,114 +4,337 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
-//
-//  DashboardView.swift
-//  PlantCareApp
-//
-//  Created by cobsccomp251p-24 on 2026-10-23.
-//
 
 import SwiftUI
 
 struct DashboardView: View {
-    @StateObject private var viewModel = DashboardViewModel()
     
+    @StateObject private var viewModel = DashboardViewModel()
+
+    
+    @State private var completedTaskIDs: Set<AnyHashable> = []
+    @State private var showLogoutConfirm = false
+    @State private var animateHealth = false
+
+   
+    private let gardenHealth: Double = 0.82
+    private let healthyCount = 4
+    private let needCareCount = 2
+    private let diseaseCount = 1
+
+    private var userInitial: String {
+        let name = "\(viewModel.userName)"
+        return String(name.prefix(1)).uppercased()
+    }
+
+    private var doneCount: Int {
+        viewModel.careTasks.filter { completedTaskIDs.contains(AnyHashable($0.id)) }.count
+    }
+
+    private var healthMessage: String {
+        gardenHealth >= 0.8 ? "Your garden is thriving" : "Some plants need attention"
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.plantBackground.ignoresSafeArea()
-                
+
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
-                        
-                        // Header
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(viewModel.currentDate)
-                                .font(.subheadline).foregroundColor(.gray)
-                            
-                            //dynamic userName
-                            Text("\(viewModel.greeting), \(viewModel.userName)")
-                                .font(.system(size: 28, weight: .bold)).foregroundColor(.plantText)
-                        }.padding(.top, 10)
-                        
-                        // Gardenhealth Card
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Garden health")
-                                .font(.subheadline).fontWeight(.medium).foregroundColor(.white.opacity(0.9))
-                            
-                            Text("82%")
-                                .font(.system(size: 48, weight: .bold)).foregroundColor(.white)
-                            
-                            // Custom Progress Bar
-                            GeometryReader { geometry in
-                                ZStack(alignment: .leading) {
-                                    Capsule().frame(width: geometry.size.width, height: 10).foregroundColor(Color.white.opacity(0.2))
-                                    Capsule().frame(width: geometry.size.width * 0.82, height: 10).foregroundColor(.white)
-                                }
-                            }.frame(height: 10)
-                            
-                            Text("4 healthy, 2 need care, 1 possible disease")
-                                .font(.caption).foregroundColor(.white.opacity(0.8))
-                        }
-                        .padding(24)
-                        .background(Color.plantPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                        .shadow(color: Color.plantPrimary.opacity(0.3), radius: 10, x: 0, y: 5)
-                        
-                        // Weather Card
-                        HStack {
-                            Image(systemName: "sun.max.fill").font(.title).foregroundColor(.orange)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Perfect growing day").font(.headline).foregroundColor(.plantText)
-                                Text("22° - Bright indirect light").font(.caption).foregroundColor(.gray)
-                            }
-                            Spacer()
-                            Text("Sri Lanka").font(.caption).foregroundColor(.gray)
-                        }
-                        .padding(16)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        
-                        // Todays Care
-                        HStack {
-                            Text("Today's care").font(.title3).fontWeight(.bold).foregroundColor(.plantText)
-                            Spacer()
-                            NavigationLink(destination: CareToolsView()) {
-                                Text("Care Tools")
-                                    .font(.caption).fontWeight(.bold).foregroundColor(.white)
-                                    .padding(.horizontal, 12).padding(.vertical, 6)
-                                    .background(Color.plantPrimary).clipShape(Capsule())
-                            }
-                        }
-                        
-                        VStack(spacing: 12) {
-                            ForEach(viewModel.careTasks) { task in
-                                HStack {
-                                    Image(systemName: "leaf.fill")
-                                        .foregroundColor(.plantPrimary).padding(10).background(Color.plantBackground).clipShape(Circle())
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(task.plantName).font(.headline).foregroundColor(.plantText)
-                                        Text(task.location).font(.caption).foregroundColor(.gray)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "circle").foregroundColor(.gray.opacity(0.5))
-                                }
-                                .padding(16).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 16))
-                            }
-                        }
-                        
-                        // Log Out
-                        Button(action: { try? AuthService.shared.signOut() }) {
-                            Text("Log Out")
-                                .font(.headline).foregroundColor(.red)
-                                .frame(maxWidth: .infinity).padding()
-                                .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 16))
-                        }.padding(.top, 10)
+                        headerSection
+                        healthCard
+                        weatherCard
+                        careSection
+                        logoutButton
                     }
                     .padding(20)
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
+            .onAppear {
+                withAnimation(.easeOut(duration: 1.0)) {
+                    animateHealth = true
+                }
+            }
+            .confirmationDialog(
+                "Log out of PlantCare?",
+                isPresented: $showLogoutConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Log Out", role: .destructive) {
+                    try? AuthService.shared.signOut()
+                }
+                Button("Cancel", role: .cancel) {}
+            }
         }
+    }
+
+    //  Header
+
+    private var headerSection: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.currentDate)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+
+                Text("\(viewModel.greeting), \(viewModel.userName)")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(Color.plantText)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+            }
+
+            Spacer()
+
+            Text(userInitial)
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(width: 44, height: 44)
+                .background(Color.plantPrimary)
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+        }
+        .padding(.top, 10)
+    }
+
+    //  Garden health
+
+    private var healthCard: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(alignment: .center, spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Garden health")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white.opacity(0.9))
+
+                    Text(healthMessage)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.2), lineWidth: 10)
+
+                    Circle()
+                        .trim(from: 0, to: animateHealth ? gardenHealth : 0)
+                        .stroke(Color.white, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+
+                    Text("\(Int(gardenHealth * 100))%")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.white)
+                }
+                .frame(width: 96, height: 96)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Garden health \(Int(gardenHealth * 100)) percent")
+            }
+
+            HStack(spacing: 8) {
+                DashStatChip(value: healthyCount, label: "Healthy", dotColor: .green)
+                DashStatChip(value: needCareCount, label: "Need care", dotColor: .yellow)
+                DashStatChip(value: diseaseCount, label: "At risk", dotColor: .red)
+            }
+        }
+        .padding(22)
+        .background(
+            LinearGradient(
+                colors: [Color.plantPrimary, Color.plantPrimary.opacity(0.78)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: Color.plantPrimary.opacity(0.3), radius: 10, x: 0, y: 5)
+    }
+
+    // Weather
+
+    private var weatherCard: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "sun.max.fill")
+                .font(.title2)
+                .foregroundColor(.orange)
+                .frame(width: 48, height: 48)
+                .background(Color.orange.opacity(0.12))
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Perfect growing day")
+                    .font(.headline)
+                    .foregroundColor(Color.plantText)
+                Text("22° - Bright indirect light")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            Label("Sri Lanka", systemImage: "location.fill")
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .padding(16)
+        .dashCardStyle()
+    }
+
+    //Today's care
+
+    private var careSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Today's care")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.plantText)
+
+                    if !viewModel.careTasks.isEmpty {
+                        Text("\(doneCount) of \(viewModel.careTasks.count) done")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+
+                Spacer()
+
+                NavigationLink(destination: CareToolsView()) {
+                    Label("Care Tools", systemImage: "wrench.and.screwdriver.fill")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.plantPrimary)
+                        .clipShape(Capsule())
+                }
+            }
+
+            if viewModel.careTasks.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(Color.plantPrimary)
+                    Text("All caught up")
+                        .font(.headline)
+                        .foregroundColor(Color.plantText)
+                    Text("No plants need care today.")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(24)
+                .dashCardStyle()
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(viewModel.careTasks) { task in
+                        let isDone = completedTaskIDs.contains(AnyHashable(task.id))
+
+                        Button {
+                            withAnimation(.spring(duration: 0.3)) {
+                                if isDone {
+                                    completedTaskIDs.remove(AnyHashable(task.id))
+                                } else {
+                                    completedTaskIDs.insert(AnyHashable(task.id))
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: isDone ? "checkmark" : "leaf.fill")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundColor(Color.plantPrimary)
+                                    .frame(width: 40, height: 40)
+                                    .background(Color.plantBackground)
+                                    .clipShape(Circle())
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(task.plantName)
+                                        .font(.headline)
+                                        .foregroundColor(Color.plantText)
+                                        .strikethrough(isDone)
+
+                                    Label(task.location, systemImage: "mappin.and.ellipse")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                                    .font(.title2)
+                                    .foregroundColor(isDone ? Color.plantPrimary : Color.gray.opacity(0.4))
+                            }
+                            .padding(16)
+                            .dashCardStyle()
+                            .opacity(isDone ? 0.65 : 1)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("\(task.plantName), \(task.location)")
+                        .accessibilityValue(isDone ? "Done" : "Not done")
+                        .accessibilityHint("Double tap to mark as done")
+                    }
+                }
+                .sensoryFeedback(.selection, trigger: completedTaskIDs.count)
+            }
+        }
+    }
+
+    // Log out
+
+    private var logoutButton: some View {
+        Button {
+            showLogoutConfirm = true
+        } label: {
+            Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
+                .font(.headline)
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .dashCardStyle()
+        }
+        .padding(.top, 6)
+    }
+}
+
+//Small helpers
+
+private struct DashStatChip: View {
+    let value: Int
+    let label: String
+    let dotColor: Color
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(dotColor)
+                .frame(width: 8, height: 8)
+
+            Text("\(value) \(label)")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.18))
+        .clipShape(Capsule())
+    }
+}
+
+private extension View {
+    func dashCardStyle(radius: CGFloat = 18) -> some View {
+        self
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
+            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
 }

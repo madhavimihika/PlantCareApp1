@@ -18,7 +18,7 @@ struct ReminderSettingsView: View {
                         VStack(spacing: 0) {
                             HStack {
                                 Image(systemName: "bell.fill").foregroundColor(.plantPrimary).frame(width: 30)
-                                Text("Enable Reminders")
+                                Text("Enable Reminders").foregroundColor(.plantText)
                                 Spacer()
                                 Toggle("", isOn: $notificationsEnabled).tint(.plantPrimary)
                             }.padding()
@@ -27,7 +27,7 @@ struct ReminderSettingsView: View {
                             
                             HStack {
                                 Image(systemName: "clock.fill").foregroundColor(.plantPrimary).frame(width: 30)
-                                Text("Reminder Time")
+                                Text("Reminder Time").foregroundColor(.plantText)
                                 Spacer()
                                 DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
                                     .labelsHidden()

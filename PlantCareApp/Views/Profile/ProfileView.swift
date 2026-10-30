@@ -19,7 +19,7 @@ struct ProfileView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
                         
-                        // Profile Header
+                        // Profile Header 
                         VStack(spacing: 12) {
                             Text(userInitial)
                                 .font(.system(size: 40, weight: .bold))
@@ -38,7 +38,7 @@ struct ProfileView: View {
                         }
                         .padding(.top, 20)
                         
-                        // Account Section
+                        // Account Section 
                         VStack(alignment: .leading, spacing: 8) {
                             Text("ACCOUNT").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
                             
@@ -51,12 +51,11 @@ struct ProfileView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         
-                        // Preferences Section
+                        // Preferences Section 
                         VStack(alignment: .leading, spacing: 8) {
                             Text("PREFERENCES").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
                             
                             VStack(spacing: 0) {
-                                // Notifications Toggle
                                 HStack {
                                     Image(systemName: "bell.fill").foregroundColor(.plantPrimary).frame(width: 30)
                                     Text("Push Notifications").foregroundColor(.plantText)
@@ -66,7 +65,6 @@ struct ProfileView: View {
                                 
                                 Divider().padding(.leading, 50)
                                 
-                                //Notification Time
                                 HStack {
                                     Image(systemName: "clock.fill").foregroundColor(.plantPrimary).frame(width: 30)
                                     Text("Notification Time").foregroundColor(.plantText)
@@ -77,7 +75,6 @@ struct ProfileView: View {
                                 
                                 Divider().padding(.leading, 50)
                                 
-                                //Dark Mode Toggle
                                 HStack {
                                     Image(systemName: "moon.fill").foregroundColor(.purple).frame(width: 30)
                                     Text("Dark Mode").foregroundColor(.plantText)
@@ -89,7 +86,7 @@ struct ProfileView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         
-                        // Support Section
+                        // Support Section 
                         VStack(alignment: .leading, spacing: 8) {
                             Text("SUPPORT").font(.caption).fontWeight(.bold).foregroundColor(.gray).padding(.leading, 10)
                             
@@ -102,7 +99,7 @@ struct ProfileView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         
-                        // Log Out
+                        //  Log Out
                         Button(action: { try? AuthService.shared.signOut() }) {
                             Text("Log Out")
                                 .font(.headline).foregroundColor(.red)
@@ -135,12 +132,10 @@ struct ProfileView: View {
                 userName = namePart.prefix(1).uppercased() + namePart.dropFirst()
             }
             
-            // Initial
             if let firstChar = userName.first {
                 userInitial = String(firstChar).uppercased()
             }
             
-            // Email
             if let email = user.email {
                 userEmail = email
             }
@@ -148,7 +143,7 @@ struct ProfileView: View {
     }
 }
 
-// Reusable t
+// Reusable
 struct SettingsRow: View {
     var icon: String
     var title: String
