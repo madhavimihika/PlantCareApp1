@@ -4,23 +4,19 @@
 //
 //  Created by cobsccomp251p-24 on 2026-10-23.
 //
+//
+//  DashboardView.swift
+//  PlantCareApp
+//
 
 import SwiftUI
 
 struct DashboardView: View {
     
     @StateObject private var viewModel = DashboardViewModel()
-
     
     @State private var completedTaskIDs: Set<AnyHashable> = []
     @State private var showLogoutConfirm = false
-    @State private var animateHealth = false
-
-   
-    private let gardenHealth: Double = 0.82
-    private let healthyCount = 4
-    private let needCareCount = 2
-    private let diseaseCount = 1
 
     private var userInitial: String {
         let name = "\(viewModel.userName)"
@@ -31,10 +27,6 @@ struct DashboardView: View {
         viewModel.careTasks.filter { completedTaskIDs.contains(AnyHashable($0.id)) }.count
     }
 
-    private var healthMessage: String {
-        gardenHealth >= 0.8 ? "Your garden is thriving" : "Some plants need attention"
-    }
-
     var body: some View {
         NavigationStack {
             ZStack {
@@ -43,7 +35,10 @@ struct DashboardView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
                         headerSection
-                        healthCard
+                        
+                        // FIXED: Use the new dynamic GardenHealthCard
+                        GardenHealthCard()
+                        
                         weatherCard
                         careSection
                         logoutButton
@@ -52,11 +47,6 @@ struct DashboardView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
-            .onAppear {
-                withAnimation(.easeOut(duration: 1.0)) {
-                    animateHealth = true
-                }
-            }
             .confirmationDialog(
                 "Log out of PlantCare?",
                 isPresented: $showLogoutConfirm,
@@ -70,8 +60,7 @@ struct DashboardView: View {
         }
     }
 
-    //  Header
-
+    // Header
     private var headerSection: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 4) {
@@ -99,64 +88,7 @@ struct DashboardView: View {
         .padding(.top, 10)
     }
 
-    //  Garden health
-
-    private var healthCard: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack(alignment: .center, spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Garden health")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white.opacity(0.9))
-
-                    Text(healthMessage)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Spacer()
-
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.2), lineWidth: 10)
-
-                    Circle()
-                        .trim(from: 0, to: animateHealth ? gardenHealth : 0)
-                        .stroke(Color.white, style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-
-                    Text("\(Int(gardenHealth * 100))%")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundColor(.white)
-                }
-                .frame(width: 96, height: 96)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Garden health \(Int(gardenHealth * 100)) percent")
-            }
-
-            HStack(spacing: 8) {
-                DashStatChip(value: healthyCount, label: "Healthy", dotColor: .green)
-                DashStatChip(value: needCareCount, label: "Need care", dotColor: .yellow)
-                DashStatChip(value: diseaseCount, label: "At risk", dotColor: .red)
-            }
-        }
-        .padding(22)
-        .background(
-            LinearGradient(
-                colors: [Color.plantPrimary, Color.plantPrimary.opacity(0.78)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: Color.plantPrimary.opacity(0.3), radius: 10, x: 0, y: 5)
-    }
-
     // Weather
-
     private var weatherCard: some View {
         HStack(spacing: 14) {
             Image(systemName: "sun.max.fill")
@@ -185,8 +117,7 @@ struct DashboardView: View {
         .dashCardStyle()
     }
 
-    //Today's care
-
+    // Today's care
     private var careSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
@@ -287,7 +218,6 @@ struct DashboardView: View {
     }
 
     // Log out
-
     private var logoutButton: some View {
         Button {
             showLogoutConfirm = true
@@ -303,33 +233,7 @@ struct DashboardView: View {
     }
 }
 
-//Small helpers
-
-private struct DashStatChip: View {
-    let value: Int
-    let label: String
-    let dotColor: Color
-
-    var body: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(dotColor)
-                .frame(width: 8, height: 8)
-
-            Text("\(value) \(label)")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(Color.white.opacity(0.18))
-        .clipShape(Capsule())
-    }
-}
-
+// Small helpers
 private extension View {
     func dashCardStyle(radius: CGFloat = 18) -> some View {
         self
