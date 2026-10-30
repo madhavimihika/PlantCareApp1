@@ -15,7 +15,12 @@ class NotificationService {
         content.title = title
         content.body = body
         content.sound = .default
+        //added date time picker
         
+        var dateComponents = DateComponents()
+        dateComponents.second = hour
+        dateComponents.minute = minute
+
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         
