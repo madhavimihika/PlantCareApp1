@@ -8,25 +8,18 @@
 //  GrowthRecordsView.swift
 //  PlantCareApp
 //
-
 import SwiftUI
 import Charts
 
 struct GrowthRecordsView: View {
-    enum Metric: String, CaseIterable {
-        case height = "Height"
-        case leaves = "Leaves"
-    }
+    enum Metric: String, CaseIterable { case height = "Height"; case leaves = "Leaves" }
 
     @ObservedObject private var viewModel = MyPlantsViewModel.shared
     @State private var selectedName: String?
     @State private var metric: Metric = .height
     @State private var showingAdd = false
 
-    // FIX: This initializer was missing or incorrect, causing the build error
-    init(plant: Plant? = nil) {
-        _selectedName = State(initialValue: plant?.name)
-    }
+    init(plant: Plant? = nil) { _selectedName = State(initialValue: plant?.name) }
 
     private var plant: Plant? {
         if let name = selectedName, let match = viewModel.plants.first(where: { $0.name == name }) { return match }
@@ -44,29 +37,21 @@ struct GrowthRecordsView: View {
             if let current = plant {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
-                        if viewModel.plants.count > 1 {
-                            plantPicker
-                        }
+                        if viewModel.plants.count > 1 { plantPicker }
                         statsCard(for: current)
                         chartCard
-                        if !entries.isEmpty {
-                            historySection(for: current)
-                        }
-                    }
-                    .padding(20)
+                        if !entries.isEmpty { historySection(for: current) }
+                    }.padding(20)
                 }
-            } else {
-                emptyPlants
-            }
+            } else { emptyPlants }
         }
-        .navigationTitle("Growth records")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Growth records").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if plant != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showingAdd = true } label: {
                         Image(systemName: "plus.circle.fill").foregroundColor(.plantPrimary)
-                    }.accessibilityLabel("Add measurement")
+                    }
                 }
             }
         }
@@ -79,16 +64,12 @@ struct GrowthRecordsView: View {
         }
     }
 
-    // MARK: - Pieces
-
     private var plantPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
                 ForEach(viewModel.plants, id: \.name) { item in
                     let isSelected = item.name == plant?.name
-                    Button {
-                        withAnimation(.easeInOut) { selectedName = item.name }
-                    } label: {
+                    Button { withAnimation(.easeInOut) { selectedName = item.name } } label: {
                         HStack(spacing: 8) {
                             PlantPhoto(name: item.name, size: 26, corner: 13)
                             Text(item.name).font(.subheadline.weight(.semibold))
@@ -112,7 +93,7 @@ struct GrowthRecordsView: View {
                 PlantPhoto(name: current.name, size: 40, corner: 12)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(current.name).font(.system(.headline, design: .rounded)).foregroundColor(.plantText)
-                    Text(current.botanicalName).font(.caption).italic().foregroundColor(.secondary)
+                    Text(current.botanicalName).font(.caption).italic().foregroundColor(.gray)
                 }
                 Spacer()
             }
@@ -130,7 +111,7 @@ struct GrowthRecordsView: View {
     private func stat(value: String, label: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value).font(.system(.title3, design: .rounded).weight(.bold)).foregroundColor(color)
-            Text(label).font(.caption).foregroundColor(.secondary)
+            Text(label).font(.caption).foregroundColor(.gray)
         }
     }
 
@@ -186,7 +167,7 @@ struct GrowthRecordsView: View {
                     Image(systemName: "ruler").foregroundColor(.plantPrimary).frame(width: 42, height: 42).background(Color.plantPrimary.opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     VStack(alignment: .leading, spacing: 3) {
                         Text(entry.date.formatted(date: .abbreviated, time: .omitted)).font(.headline).foregroundColor(.plantText)
-                        Text("\(cm(entry.height)) • \(entry.leaves) leaves").font(.caption).foregroundColor(.secondary)
+                        Text("\(cm(entry.height)) • \(entry.leaves) leaves").font(.caption).foregroundColor(.gray)
                     }
                     Spacer()
                     if index > 0 {
@@ -196,7 +177,7 @@ struct GrowthRecordsView: View {
                     Menu {
                         Button(role: .destructive) { viewModel.deleteGrowth(entry, for: current) } label: { Label("Delete", systemImage: "trash") }
                     } label: {
-                        Image(systemName: "ellipsis").foregroundColor(.secondary).frame(width: 30, height: 30)
+                        Image(systemName: "ellipsis").foregroundColor(.gray).frame(width: 30, height: 30)
                     }
                 }.padding(14).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
@@ -207,20 +188,14 @@ struct GrowthRecordsView: View {
         VStack(spacing: 12) {
             Image(systemName: "leaf.fill").font(.system(size: 44)).foregroundColor(.plantPrimary.opacity(0.6))
             Text("No plants yet").font(.headline).foregroundColor(.plantText)
-            Text("Add a plant in My Plants to start tracking its growth.").font(.subheadline).foregroundColor(.secondary).multilineTextAlignment(.center)
+            Text("Add a plant in My Plants to start tracking its growth.").font(.subheadline).foregroundColor(.gray).multilineTextAlignment(.center)
         }.padding(40)
     }
 
-    private func value(of entry: GrowthEntry) -> Double {
-        metric == .height ? entry.height : Double(entry.leaves)
-    }
-
-    private func cm(_ v: Double) -> String {
-        v.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(v)) cm" : String(format: "%.1f cm", v)
-    }
+    private func value(of entry: GrowthEntry) -> Double { metric == .height ? entry.height : Double(entry.leaves) }
+    private func cm(_ v: Double) -> String { v.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(v)) cm" : String(format: "%.1f cm", v) }
 }
 
-// MARK: - Add measurement sheet
 private struct AddGrowthSheet: View {
     let plantName: String
     let onSave: (Double, Int) -> Void
@@ -229,10 +204,8 @@ private struct AddGrowthSheet: View {
     @State private var leaves: Int
 
     init(plantName: String, height: Double, leaves: Int, onSave: @escaping (Double, Int) -> Void) {
-        self.plantName = plantName
-        self.onSave = onSave
-        _height = State(initialValue: height)
-        _leaves = State(initialValue: leaves)
+        self.plantName = plantName; self.onSave = onSave
+        _height = State(initialValue: height); _leaves = State(initialValue: leaves)
     }
 
     var body: some View {
@@ -244,8 +217,7 @@ private struct AddGrowthSheet: View {
                     counter(title: "Leaves", icon: "leaf.fill", value: "\(leaves)", minus: { leaves = max(0, leaves - 1) }, plus: { leaves += 1 })
                     Spacer()
                     Button {
-                        onSave(height, leaves)
-                        dismiss()
+                        onSave(height, leaves); dismiss()
                     } label: {
                         Text("Save measurement").font(.headline).foregroundColor(.white).frame(maxWidth: .infinity).padding(.vertical, 15)
                             .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.plantPrimary))
@@ -261,7 +233,7 @@ private struct AddGrowthSheet: View {
         HStack(spacing: 14) {
             Image(systemName: icon).foregroundColor(.plantPrimary).frame(width: 44, height: 44).background(Color.plantPrimary.opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.caption).foregroundColor(.secondary)
+                Text(title).font(.caption).foregroundColor(.gray)
                 Text(value).font(.system(.title2, design: .rounded).weight(.bold)).foregroundColor(.plantText)
             }
             Spacer()

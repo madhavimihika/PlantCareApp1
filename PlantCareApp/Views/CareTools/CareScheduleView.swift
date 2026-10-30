@@ -22,9 +22,7 @@ struct CareScheduleView: View {
         return sorted.first
     }
 
-    private var others: [Plant] {
-        sorted.filter { $0.name != hero?.name }
-    }
+    private var others: [Plant] { sorted.filter { $0.name != hero?.name } }
 
     var body: some View {
         ZStack {
@@ -81,7 +79,7 @@ struct CareScheduleView: View {
             Image(systemName: "leaf.fill").font(.system(size: 44)).foregroundColor(.plantPrimary.opacity(0.6))
             Text("No plants yet").font(.headline).foregroundColor(.plantText)
             Text("Add a plant in My Plants and its \(kind.title.lowercased()) schedule will show up here.")
-                .font(.subheadline).foregroundColor(.secondary).multilineTextAlignment(.center)
+                .font(.subheadline).foregroundColor(.gray).multilineTextAlignment(.center)
         }.frame(maxWidth: .infinity).padding(.vertical, 60)
     }
 }
@@ -107,17 +105,27 @@ private struct CareHeroCard: View {
     }
 
     private var banner: some View {
-        LinearGradient(colors: [kind.tint.opacity(0.9), kind.tint.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+        // FIX 1: Use solid color instead of gradient so white text is always readable
+        kind.tint
             .frame(height: 150)
             .overlay(alignment: .topTrailing) {
-                Image(systemName: kind.icon).font(.system(size: 110)).foregroundColor(.white.opacity(0.15)).rotationEffect(.degrees(-15)).offset(x: 10, y: -5)
+                Image(systemName: kind.icon)
+                    .font(.system(size: 110))
+                    .foregroundColor(.white.opacity(0.15))
+                    .rotationEffect(.degrees(-15))
+                    .offset(x: 10, y: -5)
             }
             .overlay(alignment: .bottomLeading) {
                 HStack(spacing: 14) {
-                    PlantPhoto(name: plant.name, size: 72, corner: 36).overlay(Circle().stroke(Color.white, lineWidth: 3))
+                    PlantPhoto(name: plant.name, size: 72, corner: 36)
+                        .overlay(Circle().stroke(Color.white, lineWidth: 3))
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(plant.name).font(.system(.title3, design: .rounded).weight(.bold)).foregroundColor(.white)
-                        Label(plant.location, systemImage: "mappin.circle.fill").font(.caption).foregroundColor(.white.opacity(0.9))
+                        Text(plant.name)
+                            .font(.system(.title3, design: .rounded).weight(.bold))
+                            .foregroundColor(.white)
+                        Label(plant.location, systemImage: "mappin.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.9))
                     }
                     Spacer()
                 }.padding(18)
@@ -127,14 +135,14 @@ private struct CareHeroCard: View {
     private var details: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(kind.nextLabel).font(.caption.weight(.bold)).foregroundColor(.secondary)
+                Text(kind.nextLabel).font(.caption.weight(.bold)).foregroundColor(.gray)
                 Text(kind.statusText(days: days)).font(.system(.title2, design: .rounded).weight(.bold)).foregroundColor(days < 0 ? .red : .plantText)
-                Text(nextDate.formatted(.dateTime.weekday(.wide).month(.wide).day())).font(.subheadline).foregroundColor(.secondary)
+                Text(nextDate.formatted(.dateTime.weekday(.wide).month(.wide).day())).font(.subheadline).foregroundColor(.gray)
             }
             Divider()
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Repeat").font(.caption).foregroundColor(.secondary)
+                    Text("Repeat").font(.caption).foregroundColor(.gray)
                     Text(kind.intervalText(interval)).font(.headline).foregroundColor(.plantText)
                 }
                 Spacer()
