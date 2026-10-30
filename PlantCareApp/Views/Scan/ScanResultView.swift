@@ -106,7 +106,7 @@ struct ScanResultView: View {
                         .overlay(
                             Image(systemName: "leaf.fill")
                                 .font(.system(size: 64))
-                                .foregroundColor(.white.opacity(0.5))
+                                .foregroundColor(.black.opacity(0.5))
                         )
                 }
             }
@@ -120,7 +120,7 @@ struct ScanResultView: View {
                 if !parts.plant.isEmpty && !isUnknown {
                     Text(parts.plant)
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(.white.opacity(0.85))
+                        .foregroundColor(.black.opacity(0.85))
                 }
                 Text(isUnknown ? "Couldn't identify" : parts.condition)
                     .font(.system(.title2, design: .rounded).weight(.bold))
@@ -147,7 +147,7 @@ struct ScanResultView: View {
                         .foregroundColor(.plantText)
                     Text("sure")
                         .font(.system(size: 10))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.black.opacity(0.8))
                 }
             }
             .frame(width: 88, height: 88)
@@ -212,7 +212,7 @@ struct ScanResultView: View {
                 } label: {
                     Label("Save to care history", systemImage: "tray.and.arrow.down.fill")
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
                         .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.plantPrimary))
@@ -224,7 +224,7 @@ struct ScanResultView: View {
             } label: {
                 Text(isUnknown ? "Try again" : "Scan again")
                     .font(.headline)
-                    .foregroundColor(isUnknown ? .white : .plantPrimary)
+                    .foregroundColor(isUnknown ? .black : .plantPrimary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
                     .background(
@@ -245,7 +245,7 @@ struct TreatmentRow: View {
         HStack(alignment: .top, spacing: 14) {
             Text(number)
                 .font(.subheadline.weight(.bold))
-                .foregroundColor(.white)
+                .foregroundColor(.black.opacity(0.8))
                 .frame(width: 26, height: 26)
                 .background(Circle().fill(Color.plantPrimary))
             VStack(alignment: .leading, spacing: 3) {
